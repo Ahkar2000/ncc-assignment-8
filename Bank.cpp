@@ -223,6 +223,15 @@ void Bank::transfer(){
                             //add time
                             time_t now = time(0);
                             string cTime = ctime(&now);
+                            string data;
+                            for(auto &ch :cTime){
+                                if(ch == ' '){
+                                    ch = '/';
+                                }else{
+                                    string st(1,ch);
+                                    data = data + st;
+                                }
+                            }
                             tTime[tIndex] = cTime;
                             tIndex++;
 
@@ -268,8 +277,14 @@ void Bank::recharge(){
     }
 }
 void Bank::transferList(){
+    cout<<"You can see your transfer lists here."<<endl;
     for(int i=0; i<tIndex; i++){
-        cout<<tName[i]<<" transfered "<<tAmount[i]<<" to "<<rName[i]<<" at "<<tTime[i]<<endl;
+        if(name[currentIndex] == tName[i] || name[currentIndex] == rName[i]){
+            cout<<tName[i]<<" transfered "<<tAmount[i]<<" to "<<rName[i]<<" at "<<tTime[i]<<endl;
+        }else{
+            cout<<"There is no result."<<endl;
+            dashboard();
+        }
     }
 }
 void Bank::transferListSaving(){
@@ -279,7 +294,7 @@ void Bank::transferListSaving(){
     if(!file.is_open()){
         cout<<"Unable to record!"<<endl;
     } else{
-        for(int i=0 ; i<index ; i++){
+        for(int i=0 ; i<tIndex ; i++){
             string dataLine=tName[i]+" "+tAmount[i]+" "+rName[i]+" "+tTime[i]+"\n";
             file<<dataLine;
         }
@@ -311,6 +326,7 @@ void Bank::transferListLoading(){
                     }else if(count == 2){
                         rName[tIndex] = data;
                         data = "";
+                        count++;
                     }else if(count == 3){
                         tTime[tIndex] = data;
                         data = "";
@@ -325,5 +341,4 @@ void Bank::transferListLoading(){
         }
     }
     file.close();
-
 }
